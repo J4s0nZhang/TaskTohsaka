@@ -30,7 +30,7 @@ class ScreenGrabber:
         self.image = []
         self.region = (0,0,0,0)
         if region:
-            self.region = size
+            self.region = region 
 
     def grab_screen(self):
         if self.region != (0,0,0,0):
