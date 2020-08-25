@@ -2,3 +2,9 @@
 .ipynb_checkpoints/
 Data/
 different_cards/
+*.h5
+*.json
+*.icloud
+feature_extractor_model/
+card_classifier_model/ 
+backup_card_classifier_model/
