@@ -1,6 +1,9 @@
 """
 Controls the game by taking screen shots of the game (currently takes screen shot of the whole screen)
 mouse and screen shots taken with pyautogui 
+
+For my mac main monitor: attack button (1478, 822)
+cards: (420, 705), x increases by 250 ish per card fuck we have to get the bounding boxes don't we oof
 """
 
 import PIL 

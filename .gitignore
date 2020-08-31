@@ -8,3 +8,6 @@ different_cards/
 feature_extractor_model/
 card_classifier_model/ 
 backup_card_classifier_model/
+.nosync
+curr_best/
+siemese_data/
