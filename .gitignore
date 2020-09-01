@@ -11,3 +11,4 @@ backup_card_classifier_model/
 .nosync
 curr_best/
 siemese_data/
+curr_best_clean/
