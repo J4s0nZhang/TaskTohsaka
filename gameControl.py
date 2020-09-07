@@ -33,6 +33,20 @@ def click_at(loc):
     pyautogui.moveTo(x, y)
     pyautogui.click()
 
+# click the image 
+def click_img(img_path):
+    try: 
+        loc = pyautogui.locateOnScreen(img_path, confidence=0.9)
+        print(loc)
+        if loc == None:
+            return False
+        else:
+            loc = pyautogui.center(loc)
+            click_at(loc)
+    except pyautogui.ImageNotFoundException: 
+        return False
+    return True
+
 # prints the current mouse position 
 def print_mouse_pos():
     print("Press Ctrl-C to quit")
