@@ -11,9 +11,25 @@ import numpy as np
 import pyautogui
 import matplotlib.pyplot as plt 
 import sys 
+import Quartz
+import time
+from Quartz import CGWindowListCopyWindowInfo, kCGWindowListExcludeDesktopElements, kCGNullWindowID
+from Foundation import NSSet, NSMutableSet
+
+# get the bounds of the bluestacks emulator window 
+def getWindow():
+    for window in Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListOptionOnScreenOnly | Quartz.kCGWindowListExcludeDesktopElements, Quartz.kCGNullWindowID):
+        if window['kCGWindowOwnerName'] == "BlueStacks":
+            print("found blue stacks at: ", window.valueForKey_('kCGWindowBounds'))
+            return (window.valueForKey_('kCGWindowBounds')['X'], window.valueForKey_('kCGWindowBounds')['Y'],
+                    window.valueForKey_('kCGWindowBounds')['Width'], window.valueForKey_('kCGWindowBounds')['Height'])
+    print("Did not find bluestacks window")
+    return None
 
 # click at input location 
-def click_at(x, y):
+def click_at(loc):
+    x = loc[0]
+    y = loc[1]
     pyautogui.moveTo(x, y)
     pyautogui.click()
 
@@ -46,5 +62,10 @@ class ScreenGrabber:
         plt.show()
 
 if __name__ == "__main__":
-    print_mouse_pos()
+    region = getWindow()
+    print(region)
+    screenGrabber = ScreenGrabber(region)
+    screenGrabber.grab_screen()
+    screenGrabber.show_screen()
+    
 
