@@ -42,7 +42,8 @@ def click_img(img_path):
             return False
         else:
             loc = pyautogui.center(loc)
-            click_at(loc)
+            
+            click_at([loc[0]/2, loc[1]/2])
     except pyautogui.ImageNotFoundException: 
         return False
     return True
@@ -52,6 +53,7 @@ def print_mouse_pos():
     print("Press Ctrl-C to quit")
     try: 
         while(True):
+            time.sleep(1)
             x, y = pyautogui.position()
             print('X: %d, Y: %d' %(x,y))
 
@@ -76,10 +78,11 @@ class ScreenGrabber:
         plt.show()
 
 if __name__ == "__main__":
-    region = getWindow()
-    print(region)
-    screenGrabber = ScreenGrabber(region)
-    screenGrabber.grab_screen()
-    screenGrabber.show_screen()
+    #region = getWindow()
+    #print(region)
+    #screenGrabber = ScreenGrabber(region)
+    #screenGrabber.grab_screen()
+    #screenGrabber.show_screen()
+    print_mouse_pos()
     
 

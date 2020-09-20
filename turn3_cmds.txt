@@ -1,0 +1,10 @@
+raw s1_s1
+raw s2_s2
+raw s3_s2
+skill s2_s3,dps
+ms M_sk
+ms ms_skill1
+attack sp
+cards np1
+cards random
+cards random
