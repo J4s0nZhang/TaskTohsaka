@@ -250,7 +250,7 @@ if __name__ == "__main__":
     command_list = ["turn1_cmds.txt", "turn2_cmds.txt", "turn3_cmds.txt"]
     farmer = Farmer(command_list)
     start_time = time.time()
-    for i in range(10):
+    for i in range(2):
         farmer.farmCycle_coords()
     print("--- %s minutes ---" % (time.time() - start_time)/60)
 
