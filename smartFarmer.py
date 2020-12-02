@@ -6,7 +6,7 @@ import time
 import pyautogui
 import random
 
-supp_img_path = "./button_imgs/skadi_with_ce.png"
+supp_img_path = "./button_imgs/skadi_full.png"
 update_supp_path = "./button_imgs/update_supp.png"
 yes_button_path = "./button_imgs/yes.png"
 golden_apple = "./button_imgs/golden_apple.png"
@@ -121,32 +121,41 @@ class Farmer:
             click_at([1088, 751])
             time.sleep(6)
 
-    def farmCycle_coords(self):
+    def farmCycle_coords(self, i, end):
         self.findSupport()
-        time.sleep(12)
+        if i == 0:
+            time.sleep(1)
+            click_at([1402, 887])   # click start quest button (only needed one time)
+            time.sleep(3)
+        time.sleep(13)
         # the actual farming loop (after support selection and battle starts)
         for turn in self.turn_list:
             self.farmTurn_coords(turn)
             time.sleep(32)
 
         # clear final screens
-        for i in range(3):
+        for x in range(3):
             click_at([1290, 883])
             time.sleep(1)
         
         # press the next button
         click_at([1290, 883])
         time.sleep(1)
-        # press the repeat button
-        click_at([1034,764])
-        time.sleep(1)
-        # look for gold apple, if it shows up press it 
-        self.find_refill()
+        
+        # look for gold apple, if it shows up press it (don't do it if its the last run)
+        
+        if i != end:
+            # press the repeat button
+            click_at([1034,764])
+            time.sleep(1)
+            self.find_refill()
+        else:
+            # press the cancel button 
+            click_at([610,763])
         
     def farmTurn_coords(self, turn_codes):
         # to be implemented, with the coords txt
         # we just gotta loop through the commands element by element
-        print(turn_codes)
         for action in turn_codes:
             label, instr = action.split(' ')
             if label == "raw":
@@ -223,8 +232,26 @@ class Farmer:
         # sleep 25 seconds for the turn to finish 
         time.sleep(25)
 
+    def lotto_clicker(self, timeout):
+        # function to continuously click the lottery and then refresh once the box is done
+        # time is what decides how long to click for before resetting the box 
+        time_start = time.time()
+
+        # press continuously for timeout seconds 
+        while(time.time() < time_start + timeout):
+            pyautogui.press("2")
+            time.sleep(0.2)        
+
+        click_at([1347, 421]) # click the reset button 
+        time.sleep(1)
+        click_at([1007,765])  # click confirmation button
+        time.sleep(2)
+        click_at([846, 756])  # click close button
+        time.sleep(2)
+
     def findSupport(self):
         # tries to automatically find the support using the supp img path 
+        total_tries = 0
         counter = 0 
         status = False
         while(not status):
@@ -244,15 +271,26 @@ class Farmer:
                 time.sleep(2)
 
             counter += 1
+            # if we check for the support too many times, break out of the loop and exit
+            if counter >= 15:
+                break
+        if status == True:
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
+    
     time.sleep(2)
     command_list = ["turn1_cmds.txt", "turn2_cmds.txt", "turn3_cmds.txt"]
     farmer = Farmer(command_list)
+    end = 6
     start_time = time.time()
-    for i in range(2):
-        farmer.farmCycle_coords()
-    print("--- %s minutes ---" % (time.time() - start_time)/60)
+    for i in range(end):
+        print("starting loop: ", i+1)
+        farmer.farmCycle_coords(i, end-1)
+        #farmer.lotto_clicker(110)
+    print("--- {:.2f} minutes ---".format((time.time() - start_time)/60))
+   
 
-    #sdict = load_np_locs("./np_locs.txt")
-    #print(sdict)
+    

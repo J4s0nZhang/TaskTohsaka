@@ -12,7 +12,7 @@ import pyautogui
 import matplotlib.pyplot as plt 
 import sys 
 import Quartz
-import time
+import time 
 from Quartz import CGWindowListCopyWindowInfo, kCGWindowListExcludeDesktopElements, kCGNullWindowID
 from Foundation import NSSet, NSMutableSet
 
@@ -37,7 +37,6 @@ def click_at(loc):
 def click_img(img_path):
     try: 
         loc = pyautogui.locateOnScreen(img_path, confidence=0.9)
-        print(loc)
         if loc == None:
             return False
         else:
