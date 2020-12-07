@@ -1,15 +1,9 @@
 from gameControl import click_at
 from gameControl import click_img
-from gameControl import getWindow
 from PIL import Image
 import time
 import pyautogui
 import random
-
-supp_img_path = "./button_imgs/skadi_full.png"
-update_supp_path = "./button_imgs/update_supp.png"
-yes_button_path = "./button_imgs/yes.png"
-golden_apple = "./button_imgs/golden_apple.png"
 
 def load_np_locs(np_txt):
     # get the mouse coords of the 3 nps
@@ -55,6 +49,17 @@ def load_skill_coords(skills_txt):
         else:
             skill_count += 1
     return skill_loc_dict
+
+def load_button_coords(button_coords_txt): 
+    # get the mouse coords of the 3 nps
+    # get the mouse coords of the 3 nps
+    button_dict = {}
+    button_list = open(button_coords_txt).read().splitlines()
+    for i in range(9):
+        string = button_list[i].split()[0]
+        button_dict[string] = [int(x) for x in button_list[i].split()[1].split(',')]
+
+    return button_dict
 # wrapper work flow for continuous farming of a node
 # features to add in the future: automatically replenish AP, dantes brave chain generator
 class turnStruct():
@@ -65,69 +70,52 @@ class turnStruct():
         self.ms_skills = ms_skills    # list of master skills 
         
 class Farmer: 
-    def __init__(self, instructions_list, coords=True):
+    def __init__(self, instructions_list, mac=True):
         
         self.turn_list = []
-        """
-        if not coords:
-            
-            commands = open(instructions_list[0], "r")
-            com_list = commands.read().splitlines()
-            line_count = 1
-            for line in com_list:
-                split_line = line.split(' ')
-                if line_count == 1: 
-                    raw_skills = split_line
-                    line_count += 1
-                elif line_count == 2:
-                    skills = [x.split(',') for x in split_line]
-                    line_count += 1
-                else: 
-                    cards = split_line 
-                    line_count = 1
-                    self.turn_list.append(turnStruct(raw_skills, skills, cards))
-                
-        else:
-            """
+        self.mac = mac
         # if the instructions are in coords
-        self.np_dict = load_np_locs("np_locs.txt")
-        self.ms_dict = load_master_skills("master_skill.txt")
-        self.skill_dict = load_skill_coords("skill_locs.txt")
+        if(mac):
+            c_prefix = "./mac_coords/"
+            i_prefix = "./mac_imgs/"
+        else:
+            c_prefix = "./wind_coords/"
+            i_prefix = "./wind_imgs/"
+
+        self.np_dict = load_np_locs(c_prefix+"np_locs.txt")
+        self.ms_dict = load_master_skills(c_prefix+"master_skill.txt")
+        self.skill_dict = load_skill_coords(c_prefix+"skill_locs.txt")
+        self.button_dict = load_button_coords(c_prefix+"button_coords.txt")
+        
+        self.supp_img = i_prefix + "skadi_full.png"
+        self.update_supp_img = i_prefix + "update_supp.png"
+        self.yes_button = i_prefix +  "yes.png"
+        self.golden_apple = i_prefix + "golden_apple.png"
 
         # assuming 3 turn farming set up 
         for i in range(3):
             turn_code = open(instructions_list[i], "r").read().splitlines()
             self.turn_list.append(turn_code)
-        
-        self.supp_img = supp_img_path
-        self.update_supp_img = update_supp_path
-        self.yes_button = yes_button_path
-
-        # get the bottom of the bluestacks screen 
-        window_bounds = getWindow()
-        self.region = window_bounds # to update: turn region into something pyautogui expects
-        self.wind_bot = window_bounds[1] + window_bounds[-1] - 100
-        self.wind_side = window_bounds[0] + window_bounds[-2] - 100
 
         # curr card number count, just for simplicity for now, will be upgraded to random int 
         self.curr_num = 1
 
     def find_refill(self):
         # look for golden apple, if you find one, click, if not do nothing
-        refill =  click_img(golden_apple)
+        refill =  click_img(self.golden_apple, self.mac)
         if refill:
             time.sleep(1)
             # confirm refill 
-            click_at([1088, 751])
+            click_at(self.button_dict['refill'])
             time.sleep(6)
 
     def farmCycle_coords(self, i, end):
         self.findSupport()
         if i == 0:
             time.sleep(1)
-            click_at([1402, 887])   # click start quest button (only needed one time)
+            click_at(self.button_dict['start_quest'])   # click start quest button (only needed one time)
             time.sleep(3)
-        time.sleep(13)
+        time.sleep(25)
         # the actual farming loop (after support selection and battle starts)
         for turn in self.turn_list:
             self.farmTurn_coords(turn)
@@ -135,23 +123,23 @@ class Farmer:
 
         # clear final screens
         for x in range(3):
-            click_at([1290, 883])
+            click_at(self.button_dict['next'])
             time.sleep(1)
         
         # press the next button
-        click_at([1290, 883])
+        click_at(self.button_dict['next'])
         time.sleep(1)
         
         # look for gold apple, if it shows up press it (don't do it if its the last run)
         
         if i != end:
             # press the repeat button
-            click_at([1034,764])
+            click_at(self.button_dict['repeat'])
             time.sleep(1)
             self.find_refill()
         else:
             # press the cancel button 
-            click_at([610,763])
+            click_at(self.button_dict['cancel'])
         
     def farmTurn_coords(self, turn_codes):
         # to be implemented, with the coords txt
@@ -167,7 +155,7 @@ class Farmer:
                 skill, target = instr.split(',')
                 click_at(self.skill_dict[skill])
                 time.sleep(0.5)
-                click_at([550,631]) # assuming dps is at pos 1 always for now aka: 550,631
+                click_at(self.button_dict['supp_port']) # assuming dps is at pos 1 always for now aka: 550,631
                 time.sleep(3) # then wait 3 seconds for the skill activation
 
             elif label == "ms":
@@ -203,35 +191,6 @@ class Farmer:
                 time.sleep(0.5)
         return
 
-    def farmTurn_imgs(self, turn):
-        # perform the actions of the turn 
-
-        # first click and wait for the raw skills to finish
-        for img in turn.raw_skills:
-            print("looking for: ", img)  
-            click_img(img, self.region)
-            time.sleep(3) # sleep 3 seconds for the skill activation 
-        
-        # complete the targetted skills (if any)
-        for imgs in turn.skills: 
-            click_img(imgs[0],  self.region) # click the skill 
-            time.sleep(0.5)
-            click_img(imgs[1],  self.region) # select the servant to use it on 
-            time.sleep(3)   # wait for the skill activation 
-
-        # press space to attack 
-        pyautogui.press('space')
-        time.sleep(0.5)
-
-        # for turn cards, I think we may need actual coords...
-        turn.cards[0] = pyautogui.locateOnScreen(turn.cards[0], confidence=0.9)
-        for pos in turn.cards: 
-            click_at(pos)
-            time.sleep(0.5)
-
-        # sleep 25 seconds for the turn to finish 
-        time.sleep(25)
-
     def lotto_clicker(self, timeout):
         # function to continuously click the lottery and then refresh once the box is done
         # time is what decides how long to click for before resetting the box 
@@ -242,32 +201,33 @@ class Farmer:
             pyautogui.press("2")
             time.sleep(0.2)        
 
-        click_at([1347, 421]) # click the reset button 
+        click_at(self.button_dict['reset']) # click the reset button 
         time.sleep(1)
-        click_at([1007,765])  # click confirmation button
+        click_at(self.button_dict['confirmation'])  # click confirmation button
         time.sleep(2)
-        click_at([846, 756])  # click close button
+        click_at(self.button_dict['close'])  # click close button
         time.sleep(2)
 
     def findSupport(self):
         # tries to automatically find the support using the supp img path 
         total_tries = 0
-        counter = 0 
+        counter = 1
         status = False
         while(not status):
             time.sleep(1)
-            status = click_img(self.supp_img)
+            status = click_img(self.supp_img, self.mac)
             time.sleep(0.5)
+            print(status)
             if status == False and (counter % 8 != 0): 
                 # if we don't find the support, scroll down on the list 
-                pyautogui.moveTo(self.wind_side, self.wind_bot)
-                pyautogui.drag(0, -400, 1, button="left") # drag up
-                pyautogui.move(0, 400)                   # return to original position
+                print("scrolling")
+                pyautogui.scroll(-100)
+
             elif status == False and (counter % 8 == 0) and counter != 0 :
                 # if we've already tried 7 times, refresh the friendlist 
-                click_img(self.update_supp_img)
+                click_img(self.update_supp_img, self.mac)
                 time.sleep(0.5)
-                click_img(self.yes_button)
+                click_img(self.yes_button, self.mac)
                 time.sleep(2)
 
             counter += 1
@@ -283,8 +243,8 @@ if __name__ == "__main__":
     
     time.sleep(2)
     command_list = ["turn1_cmds.txt", "turn2_cmds.txt", "turn3_cmds.txt"]
-    farmer = Farmer(command_list)
-    end = 6
+    farmer = Farmer(command_list, mac=False)
+    end = 1
     start_time = time.time()
     for i in range(end):
         print("starting loop: ", i+1)
@@ -292,5 +252,4 @@ if __name__ == "__main__":
         #farmer.lotto_clicker(110)
     print("--- {:.2f} minutes ---".format((time.time() - start_time)/60))
    
-
     

@@ -1,0 +1,9 @@
+refill 1088,751
+start_quest 1402,887
+next 1290,883
+repeat 1034,764
+cancel 610,763
+supp_port 550,631
+reset 1347,421
+confirmation 1007,765
+close 846,756

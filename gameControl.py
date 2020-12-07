@@ -7,24 +7,9 @@ cards: (420, 705), x increases by 250 ish per card fuck we have to get the bound
 """
 
 import PIL 
-import numpy as np 
 import pyautogui
-import matplotlib.pyplot as plt 
 import sys 
-import Quartz
 import time 
-from Quartz import CGWindowListCopyWindowInfo, kCGWindowListExcludeDesktopElements, kCGNullWindowID
-from Foundation import NSSet, NSMutableSet
-
-# get the bounds of the bluestacks emulator window 
-def getWindow():
-    for window in Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListOptionOnScreenOnly | Quartz.kCGWindowListExcludeDesktopElements, Quartz.kCGNullWindowID):
-        if window['kCGWindowOwnerName'] == "BlueStacks":
-            print("found blue stacks at: ", window.valueForKey_('kCGWindowBounds'))
-            return (window.valueForKey_('kCGWindowBounds')['X'], window.valueForKey_('kCGWindowBounds')['Y'],
-                    window.valueForKey_('kCGWindowBounds')['Width'], window.valueForKey_('kCGWindowBounds')['Height'])
-    print("Did not find bluestacks window")
-    return None
 
 # click at input location 
 def click_at(loc):
@@ -34,17 +19,18 @@ def click_at(loc):
     pyautogui.click()
 
 # click the image 
-def click_img(img_path):
-    try: 
-        loc = pyautogui.locateOnScreen(img_path, confidence=0.9)
-        if loc == None:
-            return False
-        else:
-            loc = pyautogui.center(loc)
-            
-            click_at([loc[0]/2, loc[1]/2])
-    except pyautogui.ImageNotFoundException: 
+def click_img(img_path, mac):
+    #try: 
+    loc = pyautogui.locateOnScreen(img_path, confidence=0.9)
+    if loc == None:
         return False
+    else:
+        loc = pyautogui.center(loc)
+        if mac:
+            loc = [i/2 for i in loc]
+        click_at([loc[0], loc[1]])
+    #except pyautogui.useImageNotFoundExcept: 
+        #return False
     return True
 
 # prints the current mouse position 
@@ -71,10 +57,6 @@ class ScreenGrabber:
             self.image = pyautogui.screenshot(region=region)
         else:
             self.image = pyautogui.screenshot()
-
-    def show_screen(self):
-        plt.imshow(self.image)
-        plt.show()
 
 if __name__ == "__main__":
     #region = getWindow()
