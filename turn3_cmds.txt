@@ -1,5 +1,4 @@
 raw s1_s1
-raw s2_s2
 raw s3_s2
 skill s2_s3,dps
 ms M_sk

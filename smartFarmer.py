@@ -110,17 +110,18 @@ class Farmer:
             time.sleep(6)
 
     def farmCycle_coords(self, i, end):
-        self.findSupport()
+        if not (self.findSupport()):
+            return False
         if i == 0:
-            time.sleep(1)
+            time.sleep(3)
             click_at(self.button_dict['start_quest'])   # click start quest button (only needed one time)
             time.sleep(3)
-        time.sleep(25)
+        time.sleep(28)
         # the actual farming loop (after support selection and battle starts)
         for turn in self.turn_list:
             self.farmTurn_coords(turn)
-            time.sleep(32)
-
+            time.sleep(38)
+        time.sleep(2)
         # clear final screens
         for x in range(3):
             click_at(self.button_dict['next'])
@@ -140,6 +141,9 @@ class Farmer:
         else:
             # press the cancel button 
             click_at(self.button_dict['cancel'])
+        
+        time.sleep(10)
+        return True
         
     def farmTurn_coords(self, turn_codes):
         # to be implemented, with the coords txt
@@ -244,11 +248,16 @@ if __name__ == "__main__":
     time.sleep(2)
     command_list = ["turn1_cmds.txt", "turn2_cmds.txt", "turn3_cmds.txt"]
     farmer = Farmer(command_list, mac=False)
-    end = 1
+    end = 21
     start_time = time.time()
     for i in range(end):
         print("starting loop: ", i+1)
-        farmer.farmCycle_coords(i, end-1)
+        
+        status = farmer.farmCycle_coords(i, end-1)
+        if not status:
+            print("something went wrong in loop ", i)
+            break
+        
         #farmer.lotto_clicker(110)
     print("--- {:.2f} minutes ---".format((time.time() - start_time)/60))
    
