@@ -1,9 +1,16 @@
+"""
+Main module for automated farming in FGO. Currently strictly powered by image recognition and coordinated
+mouse clicks based turn#_cmds.txt for 3 turn quick team farming. 
+
+Jason Zhang 2020
+"""
 from gameControl import click_at
 from gameControl import click_img
 from PIL import Image
 import time
 import pyautogui
 import random
+import os
 
 def load_np_locs(np_txt):
     # get the mouse coords of the 3 nps
@@ -70,17 +77,17 @@ class turnStruct():
         self.ms_skills = ms_skills    # list of master skills 
         
 class Farmer: 
-    def __init__(self, instructions_list, mac=True):
+    def __init__(self, instructions_list, root_dir="./",mac=True):
         
         self.turn_list = []
         self.mac = mac
         # if the instructions are in coords
         if(mac):
-            c_prefix = "./mac_coords/"
-            i_prefix = "./mac_imgs/"
+            c_prefix = os.path.join(root_dir, "mac_coords/")
+            i_prefix = os.path.join(root_dir, "mac_imgs/")
         else:
-            c_prefix = "./wind_coords/"
-            i_prefix = "./wind_imgs/"
+            c_prefix = os.path.join(root_dir, "wind_coords/")
+            i_prefix = os.path.join(root_dir, "wind_imgs/")
 
         self.np_dict = load_np_locs(c_prefix+"np_locs.txt")
         self.ms_dict = load_master_skills(c_prefix+"master_skill.txt")
@@ -94,7 +101,8 @@ class Farmer:
 
         # assuming 3 turn farming set up 
         for i in range(3):
-            turn_code = open(instructions_list[i], "r").read().splitlines()
+            turn_code = open(os.path.join(root_dir, instructions_list[i]),
+                             "r").read().splitlines()
             self.turn_list.append(turn_code)
 
         # curr card number count, just for simplicity for now, will be upgraded to random int 
@@ -242,6 +250,18 @@ class Farmer:
             return True
         else:
             return False
+
+def run_quick_turns(command_list, root_dir, mac, farm_turns):
+    time.sleep(3)
+    farmer = Farmer(command_list, root_dir, mac)
+    start_time = time.time()
+    for i in range(farm_turns):
+        print("starting loop: ", i+1)
+        status = farmer.farmCycle_coords(i, farm_turns-1)
+        if not status:
+            print("something went wrong in loop ", i)
+            break
+    print("--- {:.2f} minutes ---".format((time.time() - start_time)/60))
 
 if __name__ == "__main__":
     

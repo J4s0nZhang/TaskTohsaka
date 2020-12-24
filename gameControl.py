@@ -1,9 +1,10 @@
 """
 Controls the game by taking screen shots of the game (currently takes screen shot of the whole screen)
-mouse and screen shots taken with pyautogui 
+mouse and screen shots taken with pyautogui. To make the system work on a new machine, the txt files need to
+be provided and updated with the coordinates of the buttons. 
 
-For my mac main monitor: attack button (1478, 822)
-cards: (420, 705), x increases by 250 ish per card fuck we have to get the bounding boxes don't we oof
+Run this program to continuously print out mouse coordinates to get the coords for each of the buttons
+Jason Zhang 2020 
 """
 
 import PIL 
@@ -29,8 +30,6 @@ def click_img(img_path, mac):
         if mac:
             loc = [i/2 for i in loc]
         click_at([loc[0], loc[1]])
-    #except pyautogui.useImageNotFoundExcept: 
-        #return False
     return True
 
 # prints the current mouse position 
