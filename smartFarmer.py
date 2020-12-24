@@ -263,6 +263,16 @@ def run_quick_turns(command_list, root_dir, mac, farm_turns):
             break
     print("--- {:.2f} minutes ---".format((time.time() - start_time)/60))
 
+def get_lotto_boxes(num_boxes, root_dir, num_seconds): 
+    time.sleep(3)
+    farmer = Farmer([], root_dir, True)
+    start_time = time.time()
+    for i in range(num_boxes):
+        print("starting box: ", i+1)
+        farmer.lotto_clicker(num_seconds)
+
+    print("--- {:.2f} minutes ---".format((time.time() - start_time)/60))
+    
 if __name__ == "__main__":
     
     time.sleep(2)
