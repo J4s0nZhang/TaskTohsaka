@@ -1,9 +1,9 @@
 refill 1684,1230
-start_quest 2332,1436
-next 2176,1433
-repeat 1692,1229
-cancel 948,1229
-supp_port 723,975
+start_quest 2250,1436
+next 2096,1392
+repeat 1668,1236
+cancel 939,1236
+supp_port 741,1057
 reset 2274,633
 confirmation 1712,1217
 close 1344,1209

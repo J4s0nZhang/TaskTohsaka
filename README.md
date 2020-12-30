@@ -31,11 +31,11 @@ Recommended to install above package dependencies using an [Anaconda environment
 
 Once dependencies are installed, run the dantes quick team loop GUI inside the env with:
 ```
-python guis/dantes_quick.py 
+python scripts/dantes_quick.py 
 ```
 run the lotto box clicker GUI with:
 ```
-python guis/lotto_clicker.py
+python scripts/lotto_clicker.py
 ```
 
 The current implementation requires a specific set of screen coordinates/ screenshots for in-game buttons. These will have to differ machine to machine due to varying screen size and resolutions. The coordinate information is stored in mac_coords and wind_coords respectively, and the images are stored in mac_imgs and wind_imgs. 
