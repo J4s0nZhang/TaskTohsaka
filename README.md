@@ -25,7 +25,7 @@ To check out the WIP deep learning card classification models, you need these ad
 * numpy
 * matplotlib 
 
-### Installation and usage 
+# Installation and usage 
 
 Recommended to install above package dependencies using an [Anaconda environment](https://www.anaconda.com/). 
 
@@ -40,8 +40,8 @@ python scripts/lotto_clicker.py
 
 The current implementation requires a specific set of screen coordinates/ screenshots for in-game buttons. These will have to differ machine to machine due to varying screen size and resolutions. The coordinate information is stored in mac_coords and wind_coords respectively, and the images are stored in mac_imgs and wind_imgs. 
 
-For more information on which coordinates need to be obtained and stored in what order, refer to [docs]().
+For more information on which coordinates need to be obtained and stored in what order, refer to [docs](docs/coords.md).
 
 The dantes quick loop instructions are stored on a per turn basis in turn<#>_cmds.txts. Txts for all 3 turns are required, and a 3 turn farming setup is assumed based on the nature of quick teams. 
 
-For more information on setting up the turn command txts, refer to [docs]().
+For more information on setting up the turn command txts, refer to [docs](docs/turn_commands.md).
