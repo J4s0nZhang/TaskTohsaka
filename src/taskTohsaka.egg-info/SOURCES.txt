@@ -1,0 +1,6 @@
+setup.py
+taskTohsaka.egg-info/PKG-INFO
+taskTohsaka.egg-info/SOURCES.txt
+taskTohsaka.egg-info/dependency_links.txt
+taskTohsaka.egg-info/requires.txt
+taskTohsaka.egg-info/top_level.txt
