@@ -8,3 +8,4 @@ torchvision
 tqdm
 seaborn
 tensorboard-logger
+scikit-learn

@@ -11,6 +11,7 @@ install_requires = [
     "tqdm",
     "seaborn",
     "tensorboard-logger",
+    "scikit-learn",
 ]
 
 setup(
@@ -18,7 +19,7 @@ setup(
     author="Jianxing (Jason) Zhang",
     author_email="thejasonzhang@gmail.com",
     version="1.1",
-    packages=find_packages(exclude=["core"]),
+    packages=find_packages(exclude=["staticFarmers", "tests"]),
     setup_requires=["wheel"],
     install_requires=install_requires,
 )

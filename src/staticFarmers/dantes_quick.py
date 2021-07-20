@@ -1,4 +1,4 @@
-import src.smartFarmer
+from core import smartFarmer
 import PySimpleGUI as sg 
 import os
 import time
