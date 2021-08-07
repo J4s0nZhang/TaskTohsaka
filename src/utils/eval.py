@@ -46,5 +46,43 @@ def evaluate(model, valloader, criterion, device, n_classes=3):
     
     t1 = timer() 
     confmat = confusion_matrix(labels, preds, labels=np.arange(n_classes))
-    
     return (losses.avg, accuracies.avg, confmat, t1-t0)
+    
+# WIP: deciding testing visualization pipeline 
+def plot_pred(preds, batch_size, image_batch, rows=4, cols=4):
+    plt.figure(figsize=(10, 10))
+    for i in range(batch_size):
+        ax = plt.subplot(rows, cols, i + 1)
+        plt.imshow(image_batch[i].astype("uint8"))
+        plt.title(class_names[predictions[i]])
+        plt.axis("off")
+
+def plot_pred_batch(model, valloader, device, num=8):
+    accuracies = AverageMeter()
+
+    labels = np.zeros([num], dtype=np.int32)
+    preds = np.zeros([num], dtype=np.int32)
+    idx = 0 
+    # switch to evaluate mode
+    model.eval()
+
+    count = 0
+    with torch.no_grad():
+        for image, label in valloader: 
+            if count >= num:
+                break
+            image = image.to(device)
+            label = label.to(device, non_blocking=True)
+
+            output = model(image)
+
+            #record metrics
+            acc = accuracy(output, label)
+            accuracies.update(acc, label.size(0)) 
+
+            labels[idx:idx+label.size(0)] = label.cpu().numpy()
+            preds[idx:idx+label.size(0)] = output.max(dim=1)[1].cpu().numpy()
+            idx += label.size(0)
+            count += label.size(0)
+
+    
