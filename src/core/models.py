@@ -24,7 +24,7 @@ class SiameseNet(nn.Module):
             nn.ReLU(),   
         )
         self.linear = nn.Sequential(nn.Linear(9216, 4096), nn.Sigmoid())
-        self.out = nn.Linear(4096, 1)
+        self.out = nn.Linear(4096, 1) # no final sigmoid layer, applied by BCE with logits loss
     
     def forward_path(self, x):
         x = self.conv(x)
@@ -38,7 +38,7 @@ class SiameseNet(nn.Module):
         abs_diff = torch.abs(encoded_l - encoded_r)
         out = self.out(abs_diff)
         return out 
-        
+
 class ConvNet(nn.Module):
     """
     Convolutional Neural Network with resnet50 backbone.
