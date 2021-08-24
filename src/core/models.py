@@ -3,32 +3,41 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 
-
+class Identity(nn.Module):
+    def __init__(self):
+        super().__init__()
+    def forward(self, x):
+        return x
 class SiameseNet(nn.Module):
     """
     Siemese Neural Network with resnet 50 backbone for convolution section
     """
-    def __init__(self):
+    def __init__(self, resnet=False):
         super().__init__()
-        self.conv = nn.Sequential(
-            nn.Conv2d(1, 64, 10),  
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),  
-            nn.Conv2d(64, 128, 7),
-            nn.ReLU(),    
-            nn.MaxPool2d(2),   
-            nn.Conv2d(128, 128, 4),
-            nn.ReLU(), 
-            nn.MaxPool2d(2), 
-            nn.Conv2d(128, 256, 4),
-            nn.ReLU(),   
-        )
+        if not resnet:
+            self.conv = nn.Sequential(
+                nn.Conv2d(1, 64, 10),  
+                nn.ReLU(inplace=True),
+                nn.MaxPool2d(2),  
+                nn.Conv2d(64, 128, 7),
+                nn.ReLU(),    
+                nn.MaxPool2d(2),   
+                nn.Conv2d(128, 128, 4),
+                nn.ReLU(), 
+                nn.MaxPool2d(2), 
+                nn.Conv2d(128, 256, 4),
+                nn.ReLU(),   
+            )
+        else:
+            self.conv = models.resnet50(pretrained=True)
+            self.conv.fc = Identity() 
         self.linear = nn.Sequential(nn.Linear(9216, 4096), nn.Sigmoid())
         self.out = nn.Linear(4096, 1) # no final sigmoid layer, applied by BCE with logits loss
     
     def forward_path(self, x):
         x = self.conv(x)
-        x = x.view(x.size()[0], -1) 
+        if not resnet:
+            x = x.view(x.size()[0], -1) 
         x = self.linear(x)
         return x 
 
