@@ -45,3 +45,5 @@ For more information on which coordinates need to be obtained and stored in what
 The dantes quick loop instructions are stored on a per turn basis in turn<#>_cmds.txts. Txts for all 3 turns are required, and a 3 turn farming setup is assumed based on the nature of quick teams. 
 
 For more information on setting up the turn command txts, refer to [docs](docs/turn_commands.md).
+
+If you run scripts/src/gameControl.py, it will continuously print out your mouse location to console, and let you check the button coordinates. A more user friendly, GUI based system to get coordinates in WIP. 

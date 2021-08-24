@@ -58,11 +58,7 @@ class ScreenGrabber:
             self.image = pyautogui.screenshot()
 
 if __name__ == "__main__":
-    #region = getWindow()
-    #print(region)
-    #screenGrabber = ScreenGrabber(region)
-    #screenGrabber.grab_screen()
-    #screenGrabber.show_screen()
+    # prints out mouse positions to grab coordinates 
     print_mouse_pos()
     
 
