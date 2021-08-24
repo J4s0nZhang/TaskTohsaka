@@ -1,4 +1,4 @@
-import src.smartFarmer as smartFarmer
+from core import smartFarmer
 import PySimpleGUI as sg 
 import threading 
 
