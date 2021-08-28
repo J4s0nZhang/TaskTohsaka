@@ -146,7 +146,8 @@ class SiemeseTestDataHandler:
     Helper class which returns a test dataloader for the specified data .txt. Test dataloader returns a displayable image as well as 
     an image for model evaluation
     """
-    def __init__(self, data_dir, txt_fname, verbose=True):
+    def __init__(self, data_dir, txt_fname, verbose=True, convert="L"):
+        self.convert=convert
         file_contents = utils.process_txt(os.path.join(data_dir, txt_fname))
         img_paths = []
         labels = []
@@ -173,7 +174,7 @@ class SiemeseTestDataHandler:
         # note: no data augmentation applied since all cards will be oriented the same way 
         transform = CardTransforms(size=105, norm=False, is_train=False)
         testset = SiemeseDataset(self.img_paths, self.labels, 
-                            cardtransforms=transform, is_train=False)
+                            cardtransforms=transform, is_train=False, convert=self.convert)
 
         testloader = DataLoader(testset,
                                 batch_size=batch_size,
@@ -241,7 +242,11 @@ class SiemeseDataHandler:
                 print("{} training images".format(self.train_labels.shape[0]))
 
     def get_dataloaders(self, batch_size=16, n_workers=4):
-        transform = CardTransforms(size=105, norm=False)
+        if self.convert != "L":
+            img_size = 224
+        else:
+            img_size = 105
+        transform = CardTransforms(size=img_size, norm=False)
         trainset = SiemeseDataset(self.train_img_paths, self.train_labels, cardtransforms=transform, convert=self.convert)
 
         trainloader = DataLoader(trainset,

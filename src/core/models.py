@@ -14,6 +14,7 @@ class SiameseNet(nn.Module):
     """
     def __init__(self, resnet=False):
         super().__init__()
+        self.resnet = resnet
         if not resnet:
             self.conv = nn.Sequential(
                 nn.Conv2d(1, 64, 10),  
@@ -28,15 +29,18 @@ class SiameseNet(nn.Module):
                 nn.Conv2d(128, 256, 4),
                 nn.ReLU(),   
             )
+            self.linear = nn.Sequential(nn.Linear(9216, 4096), nn.Sigmoid())
+            self.out = nn.Linear(4096, 1) # no final sigmoid layer, applied by BCE with logits loss
         else:
             self.conv = models.resnet50(pretrained=True)
             self.conv.fc = Identity() 
-        self.linear = nn.Sequential(nn.Linear(9216, 4096), nn.Sigmoid())
-        self.out = nn.Linear(4096, 1) # no final sigmoid layer, applied by BCE with logits loss
+            self.linear = nn.Sequential(nn.Linear(2048, 1024), nn.Sigmoid())
+            self.out = nn.Linear(1024, 1)
+        
     
     def forward_path(self, x):
         x = self.conv(x)
-        if not resnet:
+        if not self.resnet:
             x = x.view(x.size()[0], -1) 
         x = self.linear(x)
         return x 
