@@ -5,17 +5,12 @@ different_cards/
 *.h5
 *.json
 *.icloud
-feature_extractor_model/
-card_classifier_model/ 
-backup_card_classifier_model/
 .nosync
 curr_best/
 siemese_data/
 curr_best_clean/
 __pycache__/
 quickGUIhistory.txt
-classifier_test/*
-classifier_test_backup/*
 exp_dirs/*
 *.egg-info/*
 
