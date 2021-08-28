@@ -13,6 +13,25 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                 std=[0.229, 0.224, 0.225])
 classes_dict = {"arts": 0, "buster":1, "quick":2}
 
+class CardTransforms:
+    def __init__(self, size=128, norm=True, is_train=True):
+        # note: no data augmentation applied since all cards will be oriented the same way 
+        self.is_train = is_train
+        train_transforms = [transforms.Resize(size),
+                            transforms.CenterCrop(size),
+                            transforms.ToTensor()]
+        if norm: 
+            print("using ImageNet normalization")
+            train_transforms.append(normalize)
+
+        self.img_transform = transforms.Compose(train_transforms)
+        self.display_transform = transforms.Compose([transforms.Resize(size),
+                                                    transforms.CenterCrop(size)])
+    def __call__(self, x):
+        if self.is_train:
+            return self.img_transform(x)
+        else:
+            return self.img_transform(x), self.display_transform(x)
 class CardTestDataHandler:
     """
     Helper class which returns a test dataloader for the specified data .txt. Test dataloader returns a displayable image as well as 
@@ -33,15 +52,10 @@ class CardTestDataHandler:
     
     def get_testloader(self, batch_size=16, n_workers=4):
         # note: no data augmentation applied since all cards will be oriented the same way 
-        img_transform = transforms.Compose([transforms.Resize(128),
-                                            transforms.CenterCrop(128),
-                                            transforms.ToTensor(),
-                                            normalize])
-        display_transform = transforms.Compose([transforms.Resize(128),
-                                            transforms.CenterCrop(128)])
+        transform = CardTransforms(size=128, is_train=False)
         testset = CardDataset(self.img_paths, self.labels, 
                             compute_weights=False,
-                            image_transform=img_transform, display_transform=display_transform)
+                            cardtransforms=transform, is_train=False)
 
         testloader = DataLoader(testset,
                                 batch_size=batch_size,
@@ -104,11 +118,8 @@ class CardDataHandler:
 
     def get_dataloaders(self, batch_size=16, n_workers=4):
         # note: no data augmentation applied since all cards will be oriented the same way 
-        img_transform = transforms.Compose([transforms.Resize(128),
-                                            transforms.CenterCrop(128),
-                                            transforms.ToTensor(),
-                                            normalize])
-        trainset = CardDataset(self.train_img_paths, self.train_labels, compute_weights=self.uniform_sampling, image_transform=img_transform)
+        transform = CardTransforms(size=128)
+        trainset = CardDataset(self.train_img_paths, self.train_labels, compute_weights=self.uniform_sampling, cardtransforms=transform)
         sampler = None
         if self.uniform_sampling:
             sampler = WeightedRandomSampler(trainset.sample_weights, len(trainset.sample_weights), replacement=True)
@@ -122,7 +133,7 @@ class CardDataHandler:
                                 pin_memory=True)
         valloader = None
         if self.val_split > 0.0:
-            valset = CardDataset(self.val_img_paths, self.val_labels, compute_weights=False, image_transform=img_transform)
+            valset = CardDataset(self.val_img_paths, self.val_labels, compute_weights=False, cardtransforms=transform)
             valloader = DataLoader(valset,
                                   batch_size=batch_size, 
                                   shuffle=False,
@@ -160,13 +171,9 @@ class SiemeseTestDataHandler:
     
     def get_testloader(self, batch_size=16, n_workers=4):
         # note: no data augmentation applied since all cards will be oriented the same way 
-        img_transform = transforms.Compose([transforms.Resize(105),
-                                            transforms.CenterCrop(105),
-                                            transforms.ToTensor()])
-        display_transform = transforms.Compose([transforms.Resize(105),
-                                            transforms.CenterCrop(105)])
+        transform = CardTransforms(size=105, norm=False, is_train=False)
         testset = SiemeseDataset(self.img_paths, self.labels, 
-                            image_transform=img_transform, display_transform=display_transform)
+                            cardtransforms=transform, is_train=False)
 
         testloader = DataLoader(testset,
                                 batch_size=batch_size,
@@ -234,11 +241,8 @@ class SiemeseDataHandler:
                 print("{} training images".format(self.train_labels.shape[0]))
 
     def get_dataloaders(self, batch_size=16, n_workers=4):
-        # note: no data augmentation applied since all cards will be oriented the same way 
-        img_transform = transforms.Compose([transforms.Resize(105),
-                                            transforms.CenterCrop(105),
-                                            transforms.ToTensor()])
-        trainset = SiemeseDataset(self.train_img_paths, self.train_labels, image_transform=img_transform, convert=self.convert)
+        transform = CardTransforms(size=105, norm=False)
+        trainset = SiemeseDataset(self.train_img_paths, self.train_labels, cardtransforms=transform, convert=self.convert)
 
         trainloader = DataLoader(trainset,
                                 batch_size=batch_size,
@@ -248,7 +252,7 @@ class SiemeseDataHandler:
                                 pin_memory=True)
         valloader = None
         if self.val_split > 0.0:
-            valset = SiemeseDataset(self.val_img_paths, self.val_labels, image_transform=img_transform, convert=self.convert)
+            valset = SiemeseDataset(self.val_img_paths, self.val_labels, cardtransforms=transform, convert=self.convert)
             valloader = DataLoader(valset,
                                   batch_size=batch_size, 
                                   shuffle=False,
@@ -257,12 +261,12 @@ class SiemeseDataHandler:
                                   pin_memory=True)
         return trainloader, valloader      
 class CardDataset(Dataset):
-    def __init__(self, image_paths, labels, compute_weights=False, image_transform=transforms.ToTensor(), display_transform=None):
+    def __init__(self, image_paths, labels, compute_weights=False, cardtransforms=CardTransforms(), is_train=True):
         super().__init__()
         self.image_paths = np.asarray([x.replace("\n", "") for x in image_paths])
         self.labels = labels 
-        self.transforms = image_transform
-        self.display = display_transform
+        self.transforms = cardtransforms
+        self.is_train=is_train
         assert self.image_paths.shape[0] == self.labels.shape[0]
 
         if compute_weights:
@@ -277,19 +281,21 @@ class CardDataset(Dataset):
     def __getitem__(self, ix):
         img_path, label = self.image_paths[ix], self.labels[ix]
         image = Image.open(img_path).convert('RGB')
-        img = self.transforms(image)
         label = int(label)
-        if self.display != None:
-            display_img = self.display(image)
-            return img, np.array(display_img), label
-        return img, label
+        if self.is_train:
+            img = self.transforms(image)
+            return img, label
+        else:
+            img, display_img = self.transforms(image)
+            return img, np.array(display_img), label 
+        
 
 class SiemeseDataset(Dataset):
-    def __init__(self, image_paths, labels, image_transform=transforms.ToTensor(), display_transform=None, convert="L"):
+    def __init__(self, image_paths, labels, cardtransforms=CardTransforms(), is_train=True ,convert="L"):
         super().__init__()
         image_paths = np.asarray([x.replace("\n", "") for x in image_paths])
-        self.transforms = image_transform
-        self.display = display_transform 
+        self.transforms = cardtransforms
+        self.is_train = is_train
         self.convert = convert
         assert image_paths.shape[0] == labels.shape[0]
 
@@ -303,16 +309,18 @@ class SiemeseDataset(Dataset):
         self.n_classes = len(self.data.keys())
         self.class_list = list(self.data.keys())
         self.len = image_paths.shape[0]
+
     def __len__(self):
         return self.len
     
-    def convert_img(self, img_path, disp=False):
+    def convert_img(self, img_path):
         img = Image.open(img_path).convert(self.convert)
-        if disp:
-            img = self.display(img)
-        else:
+        disp_img = None
+        if self.is_train:
             img = self.transforms(img)
-        return img 
+        else:
+            img, disp_img = self.transforms(img)
+        return img, disp_img
     
     def __getitem__(self, ix):
         label = None 
@@ -335,12 +343,10 @@ class SiemeseDataset(Dataset):
             img_path1 = random.choice(self.data[idx1])
             img_path2 = random.choice(self.data[idx2])
        
-        image1 = self.convert_img(img_path1)
-        image2 = self.convert_img(img_path2)
+        image1, disp_img1 = self.convert_img(img_path1)
+        image2, disp_img2 = self.convert_img(img_path2)
          
-        if self.display != None: 
-            disp_img1 = self.convert_img(img_path1, disp=True)
-            disp_img2 = self.convert_img(img_path2, disp=True)
-            return image1, image2, label, np.array(disp_img1), np.array(disp_img2)
-        return image1, image2, label 
+        if self.is_train: 
+            return image1, image2, label
+        return image1, image2, label, np.array(disp_img1), np.array(disp_img2)
     
