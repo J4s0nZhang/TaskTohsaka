@@ -16,5 +16,6 @@ __pycache__/
 quickGUIhistory.txt
 classifier_test/*
 classifier_test_backup/*
-taskTohsaka.egg-info/*
 exp_dirs/*
+*.egg-info/*
+

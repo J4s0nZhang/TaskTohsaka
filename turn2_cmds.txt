@@ -1,10 +1,3 @@
-skill s3_s1,dps
-ms M_sk
-ms ms_skill3
-ms swap3
-ms swap4
-ms replace
-skill s3_s1,dps
 skill s3_s3,dps
 attack sp
 cards np1

@@ -4,8 +4,8 @@ mouse clicks based turn#_cmds.txt for 3 turn quick team farming.
 
 Jason Zhang 2020
 """
-from src.gameControl import click_at
-from src.gameControl import click_img
+from .gameControl import click_at
+from .gameControl import click_img
 from PIL import Image
 import time
 import pyautogui
@@ -174,7 +174,10 @@ class Farmer:
 
             elif label == "ms":
                  # for ms just click at the location specified, but time to wait changes
-                click_at(self.ms_dict[instr])
+                if instr == "M_sk":
+                    pyautogui.press('s')
+                else:
+                    click_at(self.ms_dict[instr])
                 if instr == "M_sk":
                     time.sleep(0.5)
                 elif instr == "ms_skill1" or instr == "ms_skill2": 
@@ -199,7 +202,10 @@ class Farmer:
                         self.curr_num += 1
                     pyautogui.press(str(self.curr_num))
                 elif "np1" in instr:
-                    click_at(self.np_dict['np1'])
+                    # press shift+1 to press the first np1
+                    pyautogui.keyDown('shift')
+                    pyautogui.press('1')
+                    pyautogui.keyUp('shift')
                 else:
                     print("why have you done this")
                 time.sleep(0.5)
