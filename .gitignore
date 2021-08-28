@@ -12,5 +12,5 @@ curr_best_clean/
 __pycache__/
 quickGUIhistory.txt
 exp_dirs/*
-*.egg-info/*
+taskTohsaka.egg-info/
 
