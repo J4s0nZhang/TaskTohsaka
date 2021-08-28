@@ -1,4 +1,5 @@
 from core import smartFarmer
+from core import gameControl
 import PySimpleGUI as sg 
 import os
 import time
@@ -39,12 +40,13 @@ while repeat:
         if root_hist != root_dir or numTurns_hist != farm_turns:
             with open("quickGUIhistory.txt", "w") as file:
                 file.writelines([root_dir + "\n", str(farm_turns)])
-        # create pop up window while the farmer is running to let user know what to do
-        sg.Popup("Farming turns, Switch to Emulator window with support screen", keep_on_top=True)
-        # run the farmer 
-        threading.Thread(target=smartFarmer.run_quick_turns, 
-                        args=(command_list,root_dir, mac, farm_turns), daemon=True).start()
-         
+        # move bluestacks window to relevant location 
+        wind_open = gameControl.set_bluestacks_wind()
+        if wind_open:
+            # run the farmer 
+            threading.Thread(target=smartFarmer.run_quick_turns, 
+                            args=(command_list,root_dir, mac, farm_turns), daemon=True).start()
+
 
     if event == "Exit" or event == sg.WIN_CLOSED:
         repeat = False

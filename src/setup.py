@@ -12,6 +12,8 @@ install_requires = [
     "seaborn",
     "tensorboard-logger",
     "scikit-learn",
+    "pygetwindow",
+    "pyautogui",
 ]
 
 setup(

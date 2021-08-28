@@ -11,6 +11,7 @@ import PIL
 import pyautogui
 import sys 
 import time 
+import pygetwindow as pw 
 
 # click at input location 
 def click_at(loc):
@@ -44,6 +45,30 @@ def print_mouse_pos():
     except KeyboardInterrupt:
         print("done")
 
+# get window location of bluestacks 
+def get_window_pos():
+    bluestacks = pw.getWindowsWithTitle("BlueStacks")[0]
+    print(bluestacks.size)
+    print(bluestacks.topleft)
+    bluestacks.activate()
+
+# set bluestacks window to correct location 
+def set_bluestacks_wind(size=(2238,1341), loc=(149,154)):
+    bluestacks_open = True
+    try:
+        bluestacks = pw.getWindowsWithTitle("BlueStacks")[0]
+    except IndexError: 
+        bluestacks_open = False
+        print("Error: Failed to find BlueStacks window")
+
+    if bluestacks_open:
+        bluestacks.moveTo(loc[0], loc[1])
+        bluestacks.resizeTo(size[0], size[1])
+        bluestacks.activate()
+    
+    return bluestacks_open
+    
+
 class ScreenGrabber:
     def __init__(self, region=None):
         self.image = []
@@ -59,6 +84,7 @@ class ScreenGrabber:
 
 if __name__ == "__main__":
     # prints out mouse positions to grab coordinates 
-    print_mouse_pos()
+    # print_mouse_pos()
+    set_bluestacks_wind()
     
 
