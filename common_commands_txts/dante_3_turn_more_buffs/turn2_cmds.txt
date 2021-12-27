@@ -1,0 +1,5 @@
+skill s3_s3,dps
+attack sp
+cards np1
+cards random
+cards random
