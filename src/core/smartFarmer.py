@@ -130,8 +130,8 @@ class Farmer:
         # the actual farming loop (after support selection and battle starts)
         for turn in self.turn_list:
             self.farmTurn_coords(turn)
-            time.sleep(38)
-        time.sleep(2)
+            time.sleep(36)
+        time.sleep(3.5)
         # clear final screens
         for x in range(3):
             click_at(self.button_dict['next'])
@@ -187,7 +187,7 @@ class Farmer:
                 elif "swap" in instr:
                     time.sleep(0.5)
                 elif "replace" in instr:
-                    time.sleep(5)
+                    time.sleep(6)
                 else:
                     time.sleep(3)
             elif label == "attack":
