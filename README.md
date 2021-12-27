@@ -1,6 +1,6 @@
 # Task:Tohsaka
 
-Task:Tohsaka is a collection of automation/ analysis tools for the mobile game Fate Grand/Order. Works on both Mac and Windows. Requires the [BlueStacks](https://www.bluestacks.com/) emulator since specific instructions are emulator specific. This is a personal project to automate farming during lottery events, and created in a way to prevent account banning due to 3rd party software being used. All scripts in this repo have no interactions with FGO itself, and thus cannot be traced. 
+Task:Tohsaka is a collection of automation/ analysis tools for the mobile game Fate Grand/Order. Works primarily on Windows. Requires the [BlueStacks](https://www.bluestacks.com/) emulator since certain inputs are emulator specific. This is a personal project to automate farming during lottery events, and created in a way to prevent account banning due to 3rd party software being used. All scripts in this repo mimick player inputs externally, and thus cannot be traced. 
 
 The features of this repo include:
 
@@ -11,19 +11,15 @@ The features of this repo include:
 # Newest Features
   - GUI for 3 turn quick team automation 
   - GUI for lotto box collection 
+  - Sets window size and location of BlueStacks on Windows so coords only need to be obtained once.
 
 ### Packages
-To use the basic quick automation system without deep learning, you'll need the following packages: 
+To use anything in the repo, first install the depencies: 
+1) `cd` into the src/ folder
+2) run `pip install -e .` in the terminal
 
-* pyautogui 0.9.48
-* pysimplegui 4.32.1
+Additionally, you need:
 * FGO emulated on BlueStacks
-
-To check out the WIP deep learning card classification models, you need these additional packages: 
-
-* tensorflow > 2.0.0
-* numpy
-* matplotlib 
 
 # Installation and usage 
 
