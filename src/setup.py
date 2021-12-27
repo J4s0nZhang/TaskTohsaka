@@ -21,7 +21,7 @@ setup(
     author="Jianxing (Jason) Zhang",
     author_email="thejasonzhang@gmail.com",
     version="1.1",
-    packages=find_packages(exclude=["staticFarmers", "tests"]),
+    packages=find_packages(exclude=["staticFarmers", "tests", "jupyter"]),
     setup_requires=["wheel"],
     install_requires=install_requires,
 )
