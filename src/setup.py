@@ -1,17 +1,7 @@
 from setuptools import find_packages, setup
 
 install_requires = [
-    "numpy",
-    "pandas",
-    "Pillow",
-    "matplotlib",
-    "scipy",
-    "torch",
-    "torchvision",
-    "tqdm",
-    "seaborn",
-    "tensorboard-logger",
-    "scikit-learn",
+    "opencv-python",
     "pygetwindow",
     "pyautogui",
 ]

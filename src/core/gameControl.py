@@ -7,9 +7,7 @@ Run this program to continuously print out mouse coordinates to get the coords f
 Jason Zhang 2020 
 """
 
-import PIL 
-import pyautogui
-import sys 
+import pyautogui 
 import time 
 import pygetwindow as pw 
 

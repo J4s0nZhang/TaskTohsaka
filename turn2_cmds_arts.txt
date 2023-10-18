@@ -1,6 +1,5 @@
-raw s1_s1
-skill s2_s3,dps
-skill s3_s3,dps
+raw s3_s1
+skill s3_s2,dps
 attack sp
 cards np1
 cards random

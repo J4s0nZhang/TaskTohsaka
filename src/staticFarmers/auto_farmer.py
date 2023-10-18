@@ -2,7 +2,6 @@ from core import smartFarmer
 from core import gameControl
 import PySimpleGUI as sg 
 import os
-import time
 import threading 
 
 # globals 

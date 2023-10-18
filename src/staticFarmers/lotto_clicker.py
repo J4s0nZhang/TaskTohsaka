@@ -4,9 +4,9 @@ import threading
 
 repeat = True
 layout = [[sg.Text('Number of boxes to open')],
-        [sg.InputText(default_text=9)], 
+        [sg.InputText(default_text=5)], 
         [sg.Text('Seconds to wait')],
-        [sg.InputText(default_text=110)],
+        [sg.InputText(default_text=125)],
         [sg.Text('Root Directory')],
         [sg.InputText(default_text="./"), sg.FolderBrowse()],
         [sg.Radio("Windows", "RADIO1", default=True), sg.Radio("Mac", "RADIO1", default=False)],

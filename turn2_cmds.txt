@@ -1,4 +1,7 @@
-skill s3_s3,dps
+skill s2_s1,dps
+skill s3_s1,dps
+ms M_sk
+ms ms_skill1
 attack sp
 cards np1
 cards random

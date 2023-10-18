@@ -9,5 +9,5 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 while(True):
-    time.sleep(30)
+    time.sleep(0.5)
     pyautogui.click(button="left") 

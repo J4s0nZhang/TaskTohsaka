@@ -6,10 +6,8 @@ Jason Zhang 2020
 """
 from .gameControl import click_at
 from .gameControl import click_img
-from PIL import Image
 import time
 import pyautogui
-import random
 import os
 
 def load_np_locs(np_txt):
@@ -94,7 +92,7 @@ class Farmer:
         self.skill_dict = load_skill_coords(c_prefix+"skill_locs.txt")
         self.button_dict = load_button_coords(c_prefix+"button_coords.txt")
         
-        self.supp_img = i_prefix + "skadi_full.png"
+        self.supp_img = i_prefix + "vitch.png"
         self.update_supp_img = i_prefix + "update_supp.png"
         self.yes_button = i_prefix +  "yes.png"
         self.golden_apple = i_prefix + "golden_apple.png"
@@ -119,6 +117,10 @@ class Farmer:
             click_at(self.button_dict['refill'])
             time.sleep(6)
 
+    def find_backup(self):
+        cancel = click_img("C:/Users/Zhanj/TaskTohsaka/wind_imgs/backup.PNG", False)
+        return cancel
+
     def farmCycle_coords(self, i, end):
         if not (self.findSupport()):
             return False
@@ -126,7 +128,9 @@ class Farmer:
             time.sleep(3)
             click_at(self.button_dict['start_quest'])   # click start quest button (only needed one time)
             time.sleep(3)
-        time.sleep(28)
+            # self.find_backup()
+            # time.sleep(3)
+        time.sleep(31)
         # the actual farming loop (after support selection and battle starts)
         for turn in self.turn_list:
             self.farmTurn_coords(turn)
@@ -163,14 +167,20 @@ class Farmer:
             if label == "raw":
                 # instruction should contain key for skill dict 
                 click_at(self.skill_dict[instr])
-                time.sleep(3) # always wait 3 seconds after skill activations 
+                time.sleep(0.3)
+                click_at(self.skill_dict[instr])
+                time.sleep(3.3) # always wait 3 seconds after skill activations 
             elif label == "skill":
                 # instruction should contain key for skill and location of servant to use it on 
                 skill, target = instr.split(',')
                 click_at(self.skill_dict[skill])
-                time.sleep(0.5)
-                click_at(self.button_dict['supp_port']) # assuming dps is at pos 1 always for now aka: 550,631
-                time.sleep(3) # then wait 3 seconds for the skill activation
+                time.sleep(0.8)
+                click_at(self.button_dict['supp_port'])
+                time.sleep(0.3)
+                click_at(self.button_dict['supp_port'])
+         
+                 # assuming dps is at pos 1 always for now aka: 550,631
+                time.sleep(3.3) # then wait 3 seconds for the skill activation
 
             elif label == "ms":
                  # for ms just click at the location specified, but time to wait changes
@@ -218,15 +228,15 @@ class Farmer:
 
         # press continuously for timeout seconds 
         while(time.time() < time_start + timeout):
-            pyautogui.press("2")
+            pyautogui.click(button="left") 
             time.sleep(0.2)        
 
-        click_at(self.button_dict['reset']) # click the reset button 
-        time.sleep(1)
-        click_at(self.button_dict['confirmation'])  # click confirmation button
-        time.sleep(2)
-        click_at(self.button_dict['close'])  # click close button
-        time.sleep(2)
+        # click_at(self.button_dict['reset']) # click the reset button 
+        # time.sleep(1)
+        # click_at(self.button_dict['confirmation'])  # click confirmation button
+        # time.sleep(2)
+        # click_at(self.button_dict['close'])  # click close button
+        # time.sleep(2)
 
     def findSupport(self):
         # tries to automatically find the support using the supp img path 
